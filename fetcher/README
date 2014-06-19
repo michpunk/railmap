@@ -1,0 +1,10 @@
+This is a very stupid fetcher.
+
+Compile with lcurl.
+
+Usage:
+./SWT_fetcher ST1 ST2
+
+Will fetch the file ./ST1/ST1_ST2.html with the list of prices to be parsed.
+
+TODO: fix the hardcoded date.
