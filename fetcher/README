@@ -8,3 +8,5 @@ Usage:
 Will fetch the file ./ST1/ST1_ST2.html with the list of prices to be parsed.
 
 TODO: fix the hardcoded date.
+
+SWT_fetcher.py is a stupid python fetcher
