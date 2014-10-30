@@ -39,7 +39,7 @@ def fetch(orig, dest, date, t):
   enqId = get_enq_id(page)
   print enqId
 
-  check_url = build_check_url()
+  check_url = build_check_url(ssid)
 
   response = opener.open(check_url)
   print response.read()
@@ -66,7 +66,7 @@ def get_enq_id(response):
   else:
     print "Error! No enq ID found"
 
-def build_check_url():
+def build_check_url(ssid):
   check_url = "http://tickets.eastcoast.co.uk/ec/en/JourneyPlanning/CheckForFTAEnquiryCompletion.aspx"
   data = {}
   data['cnt'] = '1'
