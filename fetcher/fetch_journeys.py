@@ -6,6 +6,7 @@ import urllib
 import urllib2
 import cookielib
 import time
+import re
 
 def main():
   parser = argparse.ArgumentParser(description='Fetch journeys from ORIG to DEST at given DATE and TIME')
@@ -28,25 +29,54 @@ def main():
 
 def fetch(orig, dest, date, t):
 
-  url = swt_url(orig, dest, date, t)
+  url = build_swt_url(orig, dest, date, t)
 
   cj = cookielib.CookieJar()
   opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
   response = opener.open(url)
+  page = response.read()
+  ssid = get_session_id(page)
+  enqId = get_enq_id(page)
+  print enqId
 
-  check_url = "http://tickets.eastcoast.co.uk/ec/en/JourneyPlanning/CheckForFTAEnquiryCompletion.aspx"
+  check_url = build_check_url()
 
   response = opener.open(check_url)
+  print response.read()
+# Stub, but does not work anyway yet :) It looks like we need more
+# params, for example enquiryId.
   time.sleep(2)
   response = opener.open(check_url)
-
   print response.read()
 
-def get_session_id(response)
-  cont = response.read()
-#TODO! finish this.
+def get_session_id(response):
+  pat = re.compile('mixingDeck\.sessionId = \'\w*\'')
+  tmpstr = pat.search(response)
+  if tmpstr:
+    return tmpstr.group()[24:-1]
+  else:
+    print "Error! No session ID found"
 
-def swt_url(orig, dest, date, time):
+def get_enq_id(response):
+  #TODO: this does not work at the moment. Find why :)
+  pat = re.compile('mixingDeck\.enquiryIds = \[ \d*\]')
+  tmpstr = pat.search(response)
+  if tmpstr:
+    return tmpstr.group()[26:-1]
+  else:
+    print "Error! No enq ID found"
+
+def build_check_url():
+  check_url = "http://tickets.eastcoast.co.uk/ec/en/JourneyPlanning/CheckForFTAEnquiryCompletion.aspx"
+  data = {}
+  data['cnt'] = '1'
+  data['resend'] = 'Y'
+  data['sess'] = ssid
+  url_values = urllib.urlencode(data)
+  check_url = check_url + '?' + url_values
+  return check_url
+
+def build_swt_url(orig, dest, date, time):
   base_url = "https://tickets.eastcoast.co.uk/ec/en/Landing/tis.aspx"
   data = {}
   data['od'] = orig
