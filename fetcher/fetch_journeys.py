@@ -33,7 +33,13 @@ def fetch(orig, dest, date, t):
 
   cj = cookielib.CookieJar()
   opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
+  response = opener.open('http://www.eastcoast.co.uk/')
+  for cookie in cj:
+    print cookie
+
   response = opener.open(url)
+  for cookie in cj:
+    print cookie
   page = response.read()
   ssid = get_session_id(page)
   enqId = get_enq_id(page)
@@ -42,12 +48,12 @@ def fetch(orig, dest, date, t):
   check_url = build_check_url(ssid)
 
   response = opener.open(check_url)
-  print response.read()
+#  print response.read()
 # Stub, but does not work anyway yet :) It looks like we need more
 # params, for example enquiryId.
-  time.sleep(2)
-  response = opener.open(check_url)
-  print response.read()
+#  time.sleep(2)
+#  response = opener.open(check_url)
+#  print response.read()
 
 def get_session_id(response):
   pat = re.compile('mixingDeck\.sessionId = \'\w*\'')
